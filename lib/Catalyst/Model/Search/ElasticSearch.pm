@@ -28,13 +28,13 @@ has 'transport' => (
   default  => "http",
 );
 
-=head2 additional_opts
+=head2 _additional_opts
 
 Stores other key/value pairs to pass to ElasticSearch
 
 =cut
 
-has 'additional_opts' => (
+has '_additional_opts' => (
   is        => 'rw',
   lazy      => 1,
   isa       => 'HashRef',
@@ -56,7 +56,7 @@ has '_es' => (
     ElasticSearch->new(
       servers      => $self->servers,
       transport    => $self->transport,
-      %{ $self->additional_opts },
+      %{ $self->_additional_opts },
     );
   },
   handles => {
@@ -66,6 +66,14 @@ has '_es' => (
     )
   },
 );
+
+#around BUILDARGS => sub {
+#  my $orig  = shift;
+#  my $class = shift;
+#  if ( my @exist = grep /(transport|servers)/ @_ ) {
+#    shift @exist if grep /$_/ @_ for @exist;
+#
+#};
 
 __PACKAGE__->meta->make_immutable;
 1;
