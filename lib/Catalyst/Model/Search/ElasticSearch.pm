@@ -28,6 +28,18 @@ has 'transport' => (
   default  => "http",
 );
 
+=head2 additional_opts
+
+Stores other key/value pairs to pass to ElasticSearch
+
+=cut
+
+has 'additional_opts' => (
+  is        => 'rw',
+  lazy      => 1,
+  isa       => 'HashRef',
+  default   => sub {{}},
+);
 
 =head2 _es
 
