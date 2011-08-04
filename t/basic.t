@@ -5,7 +5,6 @@ use Test::Exception;
 use ElasticSearch::TestServer;
 
 BEGIN {
-  $ENV{ES_HOME}      = '/opt/elasticsearch/bin';
   $ENV{ES_TRANSPORT} = 'http';
   use_ok 'ElasticSearch::TestServer'
     || die "ElasticSearch::TestServer required";
@@ -20,7 +19,7 @@ BEGIN {
 
   use ElasticSearch::TestServer;
   sub _build_es {
-    return ElasticSearch::TestServer->new( home => '/opt/elasticsearch/' );
+    return ElasticSearch::TestServer->new( home => '/opt/elasticsearch/', instances => 1 );
   }
 
   __PACKAGE__->meta->make_immutable;
@@ -36,6 +35,7 @@ lives_ok {
     type   => 'test',
     data   => { schpongle => 'bongle' },
     create => 1,
+    refresh => 1,
   );
 };
 my $search = $es_model->search(
@@ -43,8 +43,7 @@ my $search = $es_model->search(
   type  => 'test',
   query => { term => { schpongle => 'bongle' } }
 );
-warn Dumper $search;
-my $expected = [ { _source => { schpongle => 'bongle', }, } ];
-is_deeply( $search->{hits}{hits}, $expected );
+my $expected = { _source => { schpongle => 'bongle', }, };
+is_deeply( $search->{hits}{hits}->[0]->{_source}, $expected->{_source} );
 
 done_testing;
