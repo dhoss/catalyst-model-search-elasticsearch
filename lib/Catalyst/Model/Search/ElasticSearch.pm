@@ -3,7 +3,15 @@ use Moose;
 use namespace::autoclean;
 use ElasticSearch;
 
+
 # ABSTRACT: A simple Catalyst model to interface with L<ElasticSearch>
+
+=head1 NAME
+
+Catalyst::Model::Search::ElasticSearch
+
+=cut
+
 
 =head2 servers
 
