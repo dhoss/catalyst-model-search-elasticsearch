@@ -2,6 +2,7 @@ package Catalyst::Model::Search::ElasticSearch;
 use Moose;
 use namespace::autoclean;
 use ElasticSearch;
+extends 'Catalyst::Model';
 
 
 # ABSTRACT: A simple Catalyst model to interface with L<ElasticSearch>
