@@ -13,6 +13,61 @@ Catalyst::Model::Search::ElasticSearch
 
 =cut
 
+=head1 SYNOPSIS
+
+    package My::App;
+    use strict;
+    use warnings;
+
+    use Catalyst;;
+
+    our $VERSION = '0.01';
+    __PACKAGE__->config(
+      name            => 'Test::App',
+      'Model::Search' => {
+        transport    => 'http',
+        servers      => 'localhost:9200',
+        timeout      => 30,
+        max_requests => 10_000
+      }
+    );
+
+    __PACKAGE__->setup;
+
+
+    package My::App::Model::Search;
+    use Moose;
+    use namespace::autoclean;
+    extends 'Catalyst::Model::Search::ElasticSearch';
+
+    __PACKAGE__->meta->make_immutable;
+    1;
+
+    package My::App::Controller::Root;
+    use base 'Catalyst::Controller';
+    __PACKAGE__->config(namespace => '');
+
+    sub search : Local {
+      my ($self, $c) = @_;
+      my $params = $c->req->params;
+      my $search = $c->model('Search');
+      my $results = $search->search(
+        index => 'test',
+        type  => 'test',
+        query => { term => { schpongle => $params->{'q'} } }
+      );
+      $c->stash( results => $results );
+
+    }
+
+
+=cut
+
+=head1 WARNING
+
+This is in very alpha stages.  More testing and production use are coming up, but be warned until then.
+
+=cut
 
 =head2 servers
 
