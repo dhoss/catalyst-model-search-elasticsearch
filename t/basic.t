@@ -4,15 +4,17 @@ use Test::More;
 use Test::Exception;
 use FindBin qw/$Bin/;
 use lib "$Bin/../t/lib";
-use Catalyst::Test 'Test::App';
-use ElasticSearch::TestServer;
 use HTTP::Request::Common;
+use Test::Requires {
+  'ElasticSearch' => 0.00,
+  'ElasticSearch::TestServer' => 0.00,
+  'ElasticSearch::Transport' => 0.00
+};
 
+use ElasticSearch::TestServer;
+use Catalyst::Test 'Test::App';
 BEGIN {
   $ENV{ES_TRANSPORT} = 'http';
-  use_ok 'ElasticSearch'             || print "Bail out!";
-  use_ok 'ElasticSearch::TestServer' || print "Bail out!";
-  use_ok 'ElasticSearch::Transport'  || print "Bail out!";
 }
 
 {

@@ -4,6 +4,7 @@ author:
   - 'Devin Austin <dhoss@cpan.org>'
 build_requires:
   Test::More: 0.90
+  Test::Requires: 0.06
 configure_requires:
   ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
