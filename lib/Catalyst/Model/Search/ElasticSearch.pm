@@ -147,5 +147,12 @@ around BUILDARGS => sub {
 
 };
 
+=head1 SEE ALSO
+
+The Catalyst Advent article on integrating ElasticSearch into your app: L<http://www.catalystframework.org/calendar/2010/2>
+
+=cut
+
+
 __PACKAGE__->meta->make_immutable;
 1;
