@@ -120,7 +120,7 @@ has '_es' => (
   handles  => {
     map { $_ => $_ }
       qw(
-      search index get mget create delete reindex
+      search searchqs scrolled_search count index get mget create delete reindex
       bulk bulk_index bulk_create bulk_delete
       )
   },
