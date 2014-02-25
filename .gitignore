@@ -1,2 +1,3 @@
 *.swp
 Catalyst-Model-Search-ElasticSearch*
+.build

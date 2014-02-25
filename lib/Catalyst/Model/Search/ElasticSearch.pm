@@ -1,7 +1,7 @@
 package Catalyst::Model::Search::ElasticSearch;
 use Moose;
 use namespace::autoclean;
-use ElasticSearch;
+use Elasticsearch;
 extends 'Catalyst::Model';
 
 
