@@ -1,7 +1,7 @@
 package Catalyst::Model::Search::ElasticSearch;
 use Moose;
 use namespace::autoclean;
-use Elasticsearch;
+use Search::Elasticsearch;
 extends 'Catalyst::Model';
 
 
@@ -90,7 +90,7 @@ The transport to use to interact with the ElasticSearch API.  See L<https://meta
 has 'transport' => (
   is      => 'rw',
   lazy    => 1,
-  default => "http",
+  default => "+Search::Elasticsearch::Transport",
 );
 
 =head2 _additional_opts
@@ -128,8 +128,8 @@ has '_es' => (
 
 sub _build_es {
   my $self = shift;
-  return ElasticSearch->new(
-    servers   => $self->servers,
+  return Search::Elasticsearch->new(
+    nodes     => $self->servers,
     transport => $self->transport,
     %{ $self->_additional_opts },
   );

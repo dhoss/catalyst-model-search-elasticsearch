@@ -10,7 +10,7 @@ sub test : Local {
   my $results = $search->search(
     index => 'test',
     type  => 'test',
-    query => { term => { schpongle => $params->{'q'} } }
+    body  => { query => { term => { schpongle => $params->{'q'} } } }
   );
   $c->res->body(Dumper $results);
 
