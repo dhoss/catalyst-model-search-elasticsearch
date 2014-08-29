@@ -5,7 +5,7 @@ use Search::Elasticsearch;
 extends 'Catalyst::Model';
 
 
-# ABSTRACT: A simple Catalyst model to interface with L<ElasticSearch>
+# ABSTRACT: A simple Catalyst model to interface with L<Search::Elasticsearch>
 
 =head1 NAME
 
@@ -19,13 +19,12 @@ Catalyst::Model::Search::ElasticSearch
     use strict;
     use warnings;
 
-    use Catalyst;;
+    use Catalyst;
 
     our $VERSION = '0.01';
     __PACKAGE__->config(
       name            => 'Test::App',
       'Model::Search' => {
-        transport    => 'http',
         servers      => 'localhost:9200',
         timeout      => 30,
         max_requests => 10_000
@@ -54,7 +53,7 @@ Catalyst::Model::Search::ElasticSearch
       my $results = $search->search(
         index => 'test',
         type  => 'test',
-        query => { term => { schpongle => $params->{'q'} } }
+        body  => { query => { term => { schpongle => $params->{'q'} } } }
       );
       $c->stash( results => $results );
 
@@ -83,7 +82,7 @@ has 'servers' => (
 
 =head2 transport
 
-The transport to use to interact with the ElasticSearch API.  See L<https://metacpan.org/module/ElasticSearch#Transport-Backends> for options.
+The transport to use to interact with the Elasticsearch API.  See L<Search::Elasticsearch::Transport|Search::Elasticsearch::Transport> for options.
 
 =cut
 
@@ -95,7 +94,7 @@ has 'transport' => (
 
 =head2 _additional_opts
 
-Stores other key/value pairs to pass to ElasticSearch
+Stores other key/value pairs to pass to L<Search::Elasticsearch|Search::Elasticsearch>
 
 =cut
 
@@ -108,7 +107,7 @@ has '_additional_opts' => (
 
 =head2 _es
 
-The ElasticSearch object.
+The L<Search::Elasticsearch|Search::Elasticsearch> object.
 
 =cut
 
@@ -149,7 +148,7 @@ around BUILDARGS => sub {
 
 =head1 SEE ALSO
 
-The Catalyst Advent article on integrating ElasticSearch into your app: L<http://www.catalystframework.org/calendar/2010/2>
+The Catalyst Advent article on integrating Elasticsearch into your app: L<http://www.catalystframework.org/calendar/2010/2>
 
 =cut
 
