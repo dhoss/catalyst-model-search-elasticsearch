@@ -25,7 +25,7 @@ Catalyst::Model::Search::ElasticSearch
     __PACKAGE__->config(
       name            => 'Test::App',
       'Model::Search' => {
-        servers      => 'localhost:9200',
+        nodes        => 'localhost:9200',
         timeout      => 30,
         max_requests => 10_000
       }
@@ -68,13 +68,13 @@ This is in very alpha stages.  More testing and production use are coming up, bu
 
 =cut
 
-=head2 servers
+=head2 nodes
 
-A list of servers to connect to
+A list of nodes to connect to.
 
 =cut
 
-has 'servers' => (
+has 'nodes' => (
   is      => 'rw',
   lazy    => 1,
   default => "localhost:9200",
@@ -128,7 +128,7 @@ has '_es' => (
 sub _build_es {
   my $self = shift;
   return Search::Elasticsearch->new(
-    nodes     => $self->servers,
+    nodes     => $self->nodes,
     transport => $self->transport,
     %{ $self->_additional_opts },
   );
@@ -138,12 +138,16 @@ sub _build_es {
 around BUILDARGS => sub {
   my $orig   = shift;
   my $class  = shift;
-  my %params = @_;
 
-  delete $params{$_} for qw/ servers transport /;
-  $class->$orig(_additional_opts => \%params);
-  return $class->$orig(@_);
-
+  my $params = $class->$orig(@_);
+  if (defined $params->{servers}) {
+    warn("Passing 'servers' is deprecated, use 'nodes' now");
+    $params->{nodes} = delete $params->{servers};
+  }
+  my %additional_opts = %{$params};
+  delete $additional_opts{$_} for qw/ nodes transport /;
+  $params->{_additional_opts} = \%additional_opts;
+  return $params;
 };
 
 =head1 SEE ALSO
