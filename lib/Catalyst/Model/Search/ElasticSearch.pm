@@ -1,11 +1,11 @@
 package Catalyst::Model::Search::ElasticSearch;
 use Moose;
 use namespace::autoclean;
-use Elasticsearch;
+use Search::Elasticsearch;
 extends 'Catalyst::Model';
 
 
-# ABSTRACT: A simple Catalyst model to interface with L<ElasticSearch>
+# ABSTRACT: A simple Catalyst model to interface with L<Search::Elasticsearch>
 
 =head1 NAME
 
@@ -19,14 +19,13 @@ Catalyst::Model::Search::ElasticSearch
     use strict;
     use warnings;
 
-    use Catalyst;;
+    use Catalyst;
 
     our $VERSION = '0.01';
     __PACKAGE__->config(
       name            => 'Test::App',
       'Model::Search' => {
-        transport    => 'http',
-        servers      => 'localhost:9200',
+        nodes        => 'localhost:9200',
         timeout      => 30,
         max_requests => 10_000
       }
@@ -54,7 +53,7 @@ Catalyst::Model::Search::ElasticSearch
       my $results = $search->search(
         index => 'test',
         type  => 'test',
-        query => { term => { schpongle => $params->{'q'} } }
+        body  => { query => { term => { schpongle => $params->{'q'} } } }
       );
       $c->stash( results => $results );
 
@@ -69,13 +68,13 @@ This is in very alpha stages.  More testing and production use are coming up, bu
 
 =cut
 
-=head2 servers
+=head2 nodes
 
-A list of servers to connect to
+A list of nodes to connect to.
 
 =cut
 
-has 'servers' => (
+has 'nodes' => (
   is      => 'rw',
   lazy    => 1,
   default => "localhost:9200",
@@ -83,19 +82,19 @@ has 'servers' => (
 
 =head2 transport
 
-The transport to use to interact with the ElasticSearch API.  See L<https://metacpan.org/module/ElasticSearch#Transport-Backends> for options.
+The transport to use to interact with the Elasticsearch API.  See L<Search::Elasticsearch::Transport|Search::Elasticsearch::Transport> for options.
 
 =cut
 
 has 'transport' => (
   is      => 'rw',
   lazy    => 1,
-  default => "http",
+  default => "+Search::Elasticsearch::Transport",
 );
 
 =head2 _additional_opts
 
-Stores other key/value pairs to pass to ElasticSearch
+Stores other key/value pairs to pass to L<Search::Elasticsearch|Search::Elasticsearch>
 
 =cut
 
@@ -108,7 +107,7 @@ has '_additional_opts' => (
 
 =head2 _es
 
-The ElasticSearch object.
+The L<Search::Elasticsearch|Search::Elasticsearch> object.
 
 =cut
 
@@ -128,8 +127,8 @@ has '_es' => (
 
 sub _build_es {
   my $self = shift;
-  return ElasticSearch->new(
-    servers   => $self->servers,
+  return Search::Elasticsearch->new(
+    nodes     => $self->nodes,
     transport => $self->transport,
     %{ $self->_additional_opts },
   );
@@ -139,17 +138,21 @@ sub _build_es {
 around BUILDARGS => sub {
   my $orig   = shift;
   my $class  = shift;
-  my %params = @_;
 
-  delete $params{$_} for qw/ servers transport /;
-  $class->$orig(_additional_opts => \%params);
-  return $class->$orig(@_);
-
+  my $params = $class->$orig(@_);
+  if (defined $params->{servers}) {
+    warn("Passing 'servers' is deprecated, use 'nodes' now");
+    $params->{nodes} = delete $params->{servers};
+  }
+  my %additional_opts = %{$params};
+  delete $additional_opts{$_} for qw/ nodes transport /;
+  $params->{_additional_opts} = \%additional_opts;
+  return $params;
 };
 
 =head1 SEE ALSO
 
-The Catalyst Advent article on integrating ElasticSearch into your app: L<http://www.catalystframework.org/calendar/2010/2>
+The Catalyst Advent article on integrating Elasticsearch into your app: L<http://www.catalystframework.org/calendar/2010/2>
 
 =cut
 
