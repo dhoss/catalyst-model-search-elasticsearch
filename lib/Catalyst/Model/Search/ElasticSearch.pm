@@ -6,13 +6,7 @@ use Search::Elasticsearch;
 extends 'Catalyst::Model';
 
 
-# ABSTRACT: A simple Catalyst model to interface with L<Search::Elasticsearch>
-
-=head1 NAME
-
-Catalyst::Model::Search::ElasticSearch
-
-=cut
+# ABSTRACT: A simple Catalyst model to interface with Search::Elasticsearch
 
 =head1 SYNOPSIS
 
@@ -26,9 +20,9 @@ Catalyst::Model::Search::ElasticSearch
     __PACKAGE__->config(
       name            => 'Test::App',
       'Model::Search' => {
-        nodes        => 'localhost:9200',
-        timeout      => 30,
-        max_requests => 10_000
+        nodes           => 'localhost:9200',
+        request_timeout => 30,
+        max_requests    => 10_000
       }
     );
 
@@ -60,14 +54,11 @@ Catalyst::Model::Search::ElasticSearch
 
     }
 
-
-=cut
-
 =head1 WARNING
 
 This is in very alpha stages.  More testing and production use are coming up, but be warned until then.
 
-=cut
+=head1 CONFIGURATION PARAMETERS AND ATTRIBUTES
 
 =head2 nodes
 
@@ -95,7 +86,7 @@ has 'transport' => (
 
 =head2 _additional_opts
 
-Stores other key/value pairs to pass to L<Search::Elasticsearch|Search::Elasticsearch>
+Stores other key/value pairs to pass to L<Search::Elasticsearch|Search::Elasticsearch>.
 
 =cut
 
@@ -153,7 +144,22 @@ around BUILDARGS => sub {
 
 =head1 SEE ALSO
 
+=over
+
+=item *
+
 The Catalyst Advent article on integrating Elasticsearch into your app: L<http://www.catalystframework.org/calendar/2010/2>
+
+=item *
+
+L<Search::Elasticsearch|Search::Elasticsearch> - Elasticsearch interface this
+model provides access to
+
+=item *
+
+L<http://www.elasticsearch.org/> - Open Source Distributed Real Time Search and Analytics
+
+=back
 
 =cut
 
